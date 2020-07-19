@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ public class ServerWorker extends Thread {
 	private String login;
 	private final Server server;
 	private OutputStream out;
+	private HashSet<String> topics = new HashSet<String>();
 
 	public ServerWorker(Server server, Socket clientSocket) {
 		this.server = server;
@@ -57,6 +59,12 @@ public class ServerWorker extends Thread {
 					String[] tokenMsg = StringUtils.split(line, null, 3);
 					handleMessage(tokenMsg);
 					
+				} else if ("join".equalsIgnoreCase(cmd)) {
+					handleJoin(tokens);
+					
+				} else if ("leave".equalsIgnoreCase(cmd)) {
+					handleLeave(tokens);
+					
 				} else {
 					String msg = "unknown " + cmd + "\n";
 					out.write(msg.getBytes());
@@ -68,18 +76,49 @@ public class ServerWorker extends Thread {
 		clientSocket.close();
 	}
 	
+	private void handleLeave(String[] tokens) {
+		if(tokens.length > 1) {
+			String topic = tokens[1];
+			topics.add(topic);
+		}
+	}
+
+	public boolean isMemberOfTopic(String topic) {
+		return topics.contains(topic);
+	}
+	
+	private void handleJoin(String[] tokens) {
+		if(tokens.length > 1) {
+			String topic = tokens[1];
+			topics.add(topic);
+		}
+		
+	}
+
+	// format: msg <user> body...
+	// format: msg #<topic> body...
 	private void handleMessage(String[] tokens) throws IOException {
 		String sendTo = tokens[1];
 		String body = tokens[2];
+		
+		boolean isTopic = sendTo.charAt(0) == '#';
 		
 		List<ServerWorker> workers = server.getWorkers();
 		
 		String onlineMsg = "offline " + login + "\n";
 		for(ServerWorker worker: workers) {
-			if(sendTo.equalsIgnoreCase(worker.getLogin())) {
-				String outMsg = "msg " + login + " " + body + "\n";
-				worker.send(outMsg);
+			if(isTopic) {
+				if(worker.isMemberOfTopic(sendTo)) {
+					String outMsg = "msg " + sendTo +": " + login + " " + body + "\n";
+					worker.send(outMsg);
+				}
+			} else {
+				if(sendTo.equalsIgnoreCase(worker.getLogin())) {
+					String outMsg = "msg " + login + " " + body + "\n";
+					worker.send(outMsg);
+				}
 			}
+			
 		}
 	}
 

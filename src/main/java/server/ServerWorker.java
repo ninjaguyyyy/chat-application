@@ -30,7 +30,11 @@ public class ServerWorker extends Thread {
 		try {
 			handleConnectThread();
 		} catch (IOException e) {
-			e.printStackTrace();
+			if(e.getMessage().equalsIgnoreCase("Connection reset")){
+                System.out.println("Client disconnected..Waiting for another connection");
+            } else{
+                e.printStackTrace();
+            }
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -52,7 +56,7 @@ public class ServerWorker extends Thread {
 				if("quit".equalsIgnoreCase(cmd) || "logout".equalsIgnoreCase(cmd)) {
 					handleLogoff();
 					break;
-				} else if("login".equalsIgnoreCase(cmd)) {
+				} else if("login".equalsIgnoreCase(cmd)) { 
 					handleLogin(out, tokens);
 					
 				} else if("msg".equalsIgnoreCase(cmd)){
@@ -79,7 +83,7 @@ public class ServerWorker extends Thread {
 	private void handleLeave(String[] tokens) {
 		if(tokens.length > 1) {
 			String topic = tokens[1];
-			topics.add(topic);
+			topics.remove(topic);
 		}
 	}
 
@@ -146,7 +150,8 @@ public class ServerWorker extends Thread {
 			String login = tokens[1];
 			String pass = tokens[2];
 			if((login.equals("guest") && pass.equals("guest")) || (login.equals("chi") && pass.equals("chi"))) {
-				String msg = "login ok \n";
+				System.out.println("User login successful " + login);
+				String msg = "login ok\n";
 				out.write(msg.getBytes());
 				this.login = login;
 				
@@ -174,6 +179,7 @@ public class ServerWorker extends Thread {
 				}
 				
 			} else {
+				System.out.println("User login failed " + login);
 				String msg = "login error";
 				out.write(msg.getBytes());
 			}

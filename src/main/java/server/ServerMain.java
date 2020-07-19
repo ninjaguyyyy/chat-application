@@ -8,7 +8,6 @@ import java.util.Date;
 
 public class ServerMain {
 	public static void main(String[] args) {
-		System.out.println("hello");
 		int port = 3006;
 		Server server = new Server(port);
 		server.start();

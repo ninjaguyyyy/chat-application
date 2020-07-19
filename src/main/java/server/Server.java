@@ -24,7 +24,9 @@ public class Server extends Thread {
 			@SuppressWarnings("resource")
 			ServerSocket serverSocket = new ServerSocket(serverPort);
 			while(true) {
+				System.out.println("About client connection ...");
 				final Socket clientSocket = serverSocket.accept();
+				System.out.println("Accepted connection from " + clientSocket);
 				ServerWorker serverWorker = new ServerWorker(this, clientSocket);
 				workers.add(serverWorker);
 				serverWorker.start();
@@ -36,6 +38,5 @@ public class Server extends Thread {
 
 	public void removeWorker(ServerWorker serverWorker) {
 		workers.remove(serverWorker);
-		
 	}
 }

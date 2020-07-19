@@ -65,18 +65,17 @@ public class Client {
 		}
 	}
 
-	private void msg(String sendTo, String body) throws IOException {
+	public void msg(String sendTo, String body) throws IOException {
 		String cmd = "msg " + sendTo + " " + body + "\n";
 		serverOut.write(cmd.getBytes());
 	}
 
-	private void logout() throws IOException {
-		// TODO Auto-generated method stub
+	public void logout() throws IOException {
 		String cmd = "logout\n";
 		serverOut.write(cmd.getBytes());
 	}
 
-	private void startMessageReader() {
+	public void startMessageReader() {
 		Thread t = new Thread() {
 			@Override
 			public void run() {
@@ -86,7 +85,7 @@ public class Client {
 		t.start();
 	}
 	
-	private void readMessageLoop() {
+	public void readMessageLoop() {
 		String line;
 		try {
 			while((line = bufferdIn.readLine()) != null) {
@@ -114,7 +113,7 @@ public class Client {
 		
 	};
 	
-	private void handleMessage(String[] tokenMsg) {
+	public void handleMessage(String[] tokenMsg) {
 		String username = tokenMsg[1];
 		String msgBody = tokenMsg[2];
 		
@@ -124,7 +123,7 @@ public class Client {
 		
 	}
 
-	private void handleOnline(String[] tokens) {
+	public void handleOnline(String[] tokens) {
 		String username = tokens[1];
 		for(UserStatusListener listener: userStatusListeners) {
 			listener.online(username);
@@ -132,7 +131,7 @@ public class Client {
 		
 	}
 	
-	private void handleOffline(String[] tokens) {
+	public void handleOffline(String[] tokens) {
 		String username = tokens[1];
 		for(UserStatusListener listener: userStatusListeners) {
 			listener.offline(username);
@@ -140,7 +139,7 @@ public class Client {
 		
 	}
 
-	private boolean login(String username, String pass) throws IOException {
+	public boolean login(String username, String pass) throws IOException {
 		String cmd = "login " + username + " " + pass + "\n";
 		serverOut.write(cmd.getBytes());
 		
@@ -155,7 +154,7 @@ public class Client {
 		}
 	}
 
-	private boolean connect() {
+	public boolean connect() {
 		try {
 			this.socket = new Socket(serverName, serverPort);
 			this.serverIn = socket.getInputStream();

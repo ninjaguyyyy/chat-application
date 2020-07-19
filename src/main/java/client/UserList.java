@@ -10,6 +10,8 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -55,7 +57,7 @@ public class UserList extends JFrame implements UserStatusListener {
 	/**
 	 * Create the frame.
 	 */
-	public UserList(Client client) {
+	public UserList(final Client client) {
 		this.client = client;
 		this.client.addUserStatusListener(this);
 		
@@ -93,8 +95,18 @@ public class UserList extends JFrame implements UserStatusListener {
 		);
 		
 		userListModel = new DefaultListModel<String>();
-		JList<String> listUser = new JList<String>(userListModel);
+		final JList<String> listUser = new JList<String>(userListModel);
 		
+		listUser.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() > 1) {
+					String username = listUser.getSelectedValue();
+					MessageFrame messageFrame = new MessageFrame(client, username);
+					messageFrame.setVisible(true);
+				}
+			}
+		});
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)

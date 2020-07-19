@@ -29,40 +29,6 @@ public class Client {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		Client client = new Client("localhost", 3006);
-		client.addUserStatusListener(new UserStatusListener() {
-			
-			public void online(String username) {
-				System.out.println("Online: " + username);
-			}
-			
-			public void offline(String username) {
-				System.out.println("Offline: " + username);
-			}
-		});
-		
-		client.addMessageListener(new MessageListener() {
-			
-			public void onMessage(String fromUsername, String msgBody) {
-				System.out.println("You got a message from " + fromUsername + "===> " + msgBody);
-				
-			}
-		});
-		
-		if(!client.connect()) {
-			System.out.println("Connect failed");
-		} else {
-			System.out.println("Connect successful");
-			if(client.login("guest", "guest")) {
-				System.out.println("Login successful");
-				client.msg("chi", "hello chi");
-				
-			} else {
-				System.out.println("Login failed");
-			}
-			
-//			client.logout();
-		}
 	}
 
 	public void msg(String sendTo, String body) throws IOException {
@@ -141,7 +107,6 @@ public class Client {
 		serverOut.write(cmd.getBytes());
 		
 		String res = bufferdIn.readLine();
-		System.out.println("Response line: " + res);
 		
 		if("login ok".equalsIgnoreCase(res)) {
 			startMessageReader();

@@ -46,13 +46,14 @@ public class RegisterFrame extends JFrame {
 		setVisible(false);
 		LoginFrame frame = new LoginFrame();
 		frame.setVisible(true);
+		
 	}
 	/**
 	 * Create the frame.
 	 */
 	public RegisterFrame() {
 		setTitle("\u0110\u0103ng ky\u0301");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,7 +79,7 @@ public class RegisterFrame extends JFrame {
 		btnLogin = new JButton("\u0110\u0103ng nh\u00E2\u0323p");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(true);
+				setVisible(false);
 				LoginFrame frame = new LoginFrame();
 				frame.setVisible(true);
 			}

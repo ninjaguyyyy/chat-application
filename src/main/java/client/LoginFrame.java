@@ -1,6 +1,5 @@
 package client;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -8,7 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import client.UserList.UserListCallback;
 
 import javax.swing.JTextField;
 import javax.swing.GroupLayout;
@@ -18,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
-public class LoginFrame extends JFrame implements UserListCallback{
+public class LoginFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
@@ -45,24 +43,22 @@ public class LoginFrame extends JFrame implements UserListCallback{
 	 * Create the frame.
 	 * @throws IOException 
 	 */
-	// nghe k
-	// k m
-	// bat ben m ak
-	// thanh phia tren
-	private void doLogin() throws IOException {
+
+	public void doLogin() throws IOException {
 		String username = textFieldUsername.getText();
 		String pass = textFieldPass.getText();
 		
 		if(client.login(username, pass)) {
 			setVisible(false);
 			UserList frame = new UserList(client, username);
-			frame.setCallback(this);
+//			frame.setCallback(this);
 			frame.setVisible(true);
 			
 		} else {
 			JOptionPane.showMessageDialog(this, "Sai username/password.");
 		}
 	}
+	
 	public LoginFrame() {
 		this.client = new Client("localhost", 3006);
 		client.connect();
@@ -119,10 +115,10 @@ public class LoginFrame extends JFrame implements UserListCallback{
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	public void onClosingWindowClick() {
-		setVisible(true);
-		System.out.println("zo");
-	}
+//	public void onClosingWindowClick() {
+//		setVisible(true);
+//		System.out.println("zo");
+//	}
 	
 	
 }

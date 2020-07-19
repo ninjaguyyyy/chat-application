@@ -111,7 +111,6 @@ public class ServerWorker extends Thread {
 		
 		List<ServerWorker> workers = server.getWorkers();
 		
-		String onlineMsg = "offline " + login + "\n";
 		for(ServerWorker worker: workers) {
 			if(isTopic) {
 				if(worker.isMemberOfTopic(sendTo)) {
@@ -139,6 +138,7 @@ public class ServerWorker extends Thread {
 			}
 			
 		}
+		System.out.println("Client " + clientSocket + "no roi cuoc choi r\n");
 		clientSocket.close();
 		
 	}
@@ -162,25 +162,26 @@ public class ServerWorker extends Thread {
 				List<ServerWorker> workers = server.getWorkers();
 				
 				// send: all online -> current user
+				String onlineMsg = "online " + login + "\n";
 				for(ServerWorker worker: workers) {
 					if(worker.getLogin() != null) {
 						if(!login.equals(worker.getLogin())) {
 							String msg2 = "online " + worker.getLogin() + "\n";
+							worker.send(onlineMsg);
 							send(msg2);
 						}
-						
 					}
-					
 				}
 				
 				// send: current user -> all online
-				String onlineMsg = "online " + login + "\n";
-				for(ServerWorker worker: workers) {
-					if(!login.equals(worker.getLogin())) {
-						worker.send(onlineMsg);
-					}
-					
-				}
+//				String onlineMsg = "online " + login + "\n";
+//				for(ServerWorker worker: workers) {
+//					if(worker.getLogin() != null) {
+//						if(!login.equals(worker.getLogin())) {
+//							worker.send(onlineMsg);
+//						}
+//					}
+//				}
 				
 			} else {
 				System.out.println("User login failed " + login);

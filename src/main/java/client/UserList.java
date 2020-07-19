@@ -31,49 +31,21 @@ import java.awt.event.ActionEvent;
 public class UserList extends JFrame implements UserStatusListener {
 
 	private JPanel contentPane;
-	private Client client;
+	private final Client client;
 	private DefaultListModel<String> userListModel;
 
-	public interface UserListCallback{
-		void onClosingWindowClick();
-	}
-	
-	private UserListCallback callback;
-	
-	public void setCallback(UserListCallback callback) {
-		this.callback = callback;
-	}
 	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		final Client client = new Client("localhost", 3006);
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UserList frame = new UserList(client, "For run ide");
-					frame.setVisible(true);
-					
-					if(client.connect()) {
-						try {
-							client.login("guest", "guest");
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 	
 
 	public void handleLogout() throws IOException {
 		client.logout();
 		dispose();
+		RegisterFrame reg = new RegisterFrame();
+		reg.setVisible(true);
 	}
 
 	/**
@@ -90,15 +62,14 @@ public class UserList extends JFrame implements UserStatusListener {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				
-				System.out.println("close");
 				try {
 					client.logout();
+					
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				callback.onClosingWindowClick();
 			}
+			
 		});
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -181,15 +152,11 @@ public class UserList extends JFrame implements UserStatusListener {
 	}
 
 	public void online(String username) {
-		// TODO Auto-generated method stub
 		userListModel.addElement(username);
 	}
 
 	public void offline(String username) {
-		// TODO Auto-generated method stub
 		userListModel.removeElement(username);
 	}
-
-	
 	
 }

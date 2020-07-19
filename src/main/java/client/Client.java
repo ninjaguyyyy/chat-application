@@ -110,7 +110,6 @@ public class Client {
 				e1.printStackTrace();
 			}
 		}
-		
 	};
 	
 	public void handleMessage(String[] tokenMsg) {
@@ -120,7 +119,6 @@ public class Client {
 		for(MessageListener listener: messageListeners) {
 			listener.onMessage(username, msgBody);
 		}
-		
 	}
 
 	public void handleOnline(String[] tokens) {
@@ -128,7 +126,6 @@ public class Client {
 		for(UserStatusListener listener: userStatusListeners) {
 			listener.online(username);
 		}
-		
 	}
 	
 	public void handleOffline(String[] tokens) {

@@ -7,6 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import client.UserList.UserListCallback;
+
 import javax.swing.JTextField;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -15,7 +18,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JFrame implements UserListCallback{
 
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
@@ -42,6 +45,10 @@ public class LoginFrame extends JFrame {
 	 * Create the frame.
 	 * @throws IOException 
 	 */
+	// nghe k
+	// k m
+	// bat ben m ak
+	// thanh phia tren
 	private void doLogin() throws IOException {
 		String username = textFieldUsername.getText();
 		String pass = textFieldPass.getText();
@@ -49,6 +56,7 @@ public class LoginFrame extends JFrame {
 		if(client.login(username, pass)) {
 			setVisible(false);
 			UserList frame = new UserList(client, username);
+			frame.setCallback(this);
 			frame.setVisible(true);
 			
 		} else {
@@ -60,7 +68,7 @@ public class LoginFrame extends JFrame {
 		client.connect();
 		
 		setTitle("\u0110\u0103ng nh\u00E2\u0323p");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,7 +86,6 @@ public class LoginFrame extends JFrame {
 				try {
 					doLogin();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -111,4 +118,11 @@ public class LoginFrame extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+
+	public void onClosingWindowClick() {
+		setVisible(true);
+		System.out.println("zo");
+	}
+	
+	
 }

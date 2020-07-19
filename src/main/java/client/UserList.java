@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -21,6 +24,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class UserList extends JFrame implements UserStatusListener {
 
@@ -28,6 +34,16 @@ public class UserList extends JFrame implements UserStatusListener {
 	private Client client;
 	private DefaultListModel<String> userListModel;
 
+	public interface UserListCallback{
+		void onClosingWindowClick();
+	}
+	
+	private UserListCallback callback;
+	
+	public void setCallback(UserListCallback callback) {
+		this.callback = callback;
+	}
+	
 	/**
 	 * Launch the application.
 	 */
@@ -53,6 +69,12 @@ public class UserList extends JFrame implements UserStatusListener {
 			}
 		});
 	}
+	
+
+	public void handleLogout() throws IOException {
+		client.logout();
+		dispose();
+	}
 
 	/**
 	 * Create the frame.
@@ -64,6 +86,20 @@ public class UserList extends JFrame implements UserStatusListener {
 		this.client.addUserStatusListener(this);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				
+				System.out.println("close");
+				try {
+					client.logout();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				callback.onClosingWindowClick();
+			}
+		});
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		setContentPane(contentPane);
@@ -73,27 +109,43 @@ public class UserList extends JFrame implements UserStatusListener {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		JButton btnLogout = new JButton("\u0110\u0103ng xu\u00E2\u0301t");
+		btnLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					handleLogout();
+					
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblOnlineUsers)
-					.addPreferredGap(ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblOnlineUsers)
+						.addComponent(btnLogout))
+					.addPreferredGap(ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
 					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
 					.addGap(29))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblOnlineUsers))
+							.addComponent(lblOnlineUsers)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnLogout))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(21)
 							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(33, Short.MAX_VALUE))
+					.addContainerGap(43, Short.MAX_VALUE))
 		);
 		
 		userListModel = new DefaultListModel<String>();
@@ -138,5 +190,6 @@ public class UserList extends JFrame implements UserStatusListener {
 		userListModel.removeElement(username);
 	}
 
+	
 	
 }

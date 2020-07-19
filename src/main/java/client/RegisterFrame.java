@@ -78,7 +78,7 @@ public class RegisterFrame extends JFrame {
 		btnLogin = new JButton("\u0110\u0103ng nh\u00E2\u0323p");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
+				setVisible(true);
 				LoginFrame frame = new LoginFrame();
 				frame.setVisible(true);
 			}

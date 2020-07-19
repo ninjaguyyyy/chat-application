@@ -64,6 +64,7 @@ public class ServerWorker extends Thread {
 	}
 	
 	private void handleLogoff() throws IOException {
+		server.removeWorker(this);
 		List<ServerWorker> workers = server.getWorkers();
 		// send: current user logout -> all user
 		String onlineMsg = "offline " + login + "\n";
@@ -73,7 +74,7 @@ public class ServerWorker extends Thread {
 			}
 			
 		}
-//		clientSocket.close();
+		clientSocket.close();
 		
 	}
 
@@ -89,8 +90,6 @@ public class ServerWorker extends Thread {
 				String msg = "login ok \n";
 				out.write(msg.getBytes());
 				this.login = login;
-				System.out.println("Chuoi login: " + login);
-				
 				
 				List<ServerWorker> workers = server.getWorkers();
 				

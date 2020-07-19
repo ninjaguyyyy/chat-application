@@ -28,10 +28,8 @@ public class ServerWorker extends Thread {
 		try {
 			handleConnectThread();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -48,7 +46,8 @@ public class ServerWorker extends Thread {
 			String[] tokens = StringUtils.split(line);
 			if(tokens != null && tokens.length > 0) {
 				String cmd = tokens[0];
-				if("quit".equalsIgnoreCase(cmd)) {
+				if("quit".equalsIgnoreCase(cmd) || "logout".equalsIgnoreCase(cmd)) {
+					handleLogoff();
 					break;
 				} else if("login".equalsIgnoreCase(cmd)) {
 					handleLogin(out, tokens);
@@ -64,6 +63,20 @@ public class ServerWorker extends Thread {
 		clientSocket.close();
 	}
 	
+	private void handleLogoff() throws IOException {
+		List<ServerWorker> workers = server.getWorkers();
+		// send: current user logout -> all user
+		String onlineMsg = "offline " + login + "\n";
+		for(ServerWorker worker: workers) {
+			if(!login.equals(worker.getLogin())) {
+				worker.send(onlineMsg);
+			}
+			
+		}
+//		clientSocket.close();
+		
+	}
+
 	public String getLogin() {
 		return login;
 	}

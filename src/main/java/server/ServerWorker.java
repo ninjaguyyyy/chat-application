@@ -35,6 +35,7 @@ public class ServerWorker extends Thread {
 	}
 	
 	// login for cmd: login <user> <pass>
+	// send for chi: msg <user> text...
 	private void handleConnectThread() throws IOException, InterruptedException {
 		InputStream in = clientSocket.getInputStream();
 		out = clientSocket.getOutputStream();
@@ -52,6 +53,10 @@ public class ServerWorker extends Thread {
 				} else if("login".equalsIgnoreCase(cmd)) {
 					handleLogin(out, tokens);
 					
+				} else if("msg".equalsIgnoreCase(cmd)){
+					String[] tokenMsg = StringUtils.split(line, null, 3);
+					handleMessage(tokenMsg);
+					
 				} else {
 					String msg = "unknown " + cmd + "\n";
 					out.write(msg.getBytes());
@@ -63,6 +68,21 @@ public class ServerWorker extends Thread {
 		clientSocket.close();
 	}
 	
+	private void handleMessage(String[] tokens) throws IOException {
+		String sendTo = tokens[1];
+		String body = tokens[2];
+		
+		List<ServerWorker> workers = server.getWorkers();
+		
+		String onlineMsg = "offline " + login + "\n";
+		for(ServerWorker worker: workers) {
+			if(sendTo.equalsIgnoreCase(worker.getLogin())) {
+				String outMsg = "msg " + login + " " + body + "\n";
+				worker.send(outMsg);
+			}
+		}
+	}
+
 	private void handleLogoff() throws IOException {
 		server.removeWorker(this);
 		List<ServerWorker> workers = server.getWorkers();

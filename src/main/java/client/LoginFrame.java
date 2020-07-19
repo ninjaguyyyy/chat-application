@@ -48,7 +48,7 @@ public class LoginFrame extends JFrame {
 		
 		if(client.login(username, pass)) {
 			setVisible(false);
-			UserList frame = new UserList(client);
+			UserList frame = new UserList(client, username);
 			frame.setVisible(true);
 			
 		} else {

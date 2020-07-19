@@ -20,6 +20,7 @@ public class RegisterFrame extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldUsername;
 	private JTextField textFieldPass;
+	private JButton btnLogin;
 
 	/**
 	 * Launch the application.
@@ -42,6 +43,9 @@ public class RegisterFrame extends JFrame {
 		String pass = textFieldPass.getText();
 		
 		FileHandle.writeUser(username, pass);
+		setVisible(false);
+		LoginFrame frame = new LoginFrame();
+		frame.setVisible(true);
 	}
 	/**
 	 * Create the frame.
@@ -70,6 +74,15 @@ public class RegisterFrame extends JFrame {
 				}
 			}
 		});
+		
+		btnLogin = new JButton("\u0110\u0103ng nh\u00E2\u0323p");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				LoginFrame frame = new LoginFrame();
+				frame.setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -84,11 +97,17 @@ public class RegisterFrame extends JFrame {
 							.addGap(141)
 							.addComponent(btnRegister, GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(63, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addContainerGap(325, Short.MAX_VALUE)
+					.addComponent(btnLogin)
+					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(57)
+					.addContainerGap()
+					.addComponent(btnLogin)
+					.addGap(23)
 					.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addComponent(textFieldPass, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)

@@ -37,7 +37,7 @@ public class UserList extends JFrame implements UserStatusListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UserList frame = new UserList(client);
+					UserList frame = new UserList(client, "For run ide");
 					frame.setVisible(true);
 					
 					if(client.connect()) {
@@ -56,8 +56,10 @@ public class UserList extends JFrame implements UserStatusListener {
 
 	/**
 	 * Create the frame.
+	 * @param username 
 	 */
-	public UserList(final Client client) {
+	public UserList(final Client client, String username) {
+		setTitle("Trang chu\u0309 - " + username);
 		this.client = client;
 		this.client.addUserStatusListener(this);
 		

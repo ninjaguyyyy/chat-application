@@ -45,6 +45,7 @@ public class MessageFrame extends JFrame implements MessageListener {
 	 * @param client 
 	 */
 	public MessageFrame(final Client client, final String username) {
+		setTitle("Message: -> " + username);
 		this.client = client;
 		this.username = username;
 		

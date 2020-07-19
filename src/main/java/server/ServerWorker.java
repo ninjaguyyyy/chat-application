@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import client.FileHandle;
+
 public class ServerWorker extends Thread {
 
 	private final Socket clientSocket;
@@ -149,7 +151,9 @@ public class ServerWorker extends Thread {
 		if(tokens.length == 3) {
 			String login = tokens[1];
 			String pass = tokens[2];
-			if((login.equals("guest") && pass.equals("guest")) || (login.equals("chi") && pass.equals("chi"))) {
+			
+			boolean isLoginSuccess = FileHandle.checkLogin(login, pass);
+			if(isLoginSuccess) {
 				System.out.println("User login successful " + login);
 				String msg = "login ok\n";
 				out.write(msg.getBytes());

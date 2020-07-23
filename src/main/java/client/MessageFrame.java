@@ -4,16 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import org.apache.commons.io.FileUtils;
+
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
 import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class MessageFrame extends JFrame implements MessageListener {
 
@@ -23,6 +31,8 @@ public class MessageFrame extends JFrame implements MessageListener {
 	private DefaultListModel<String> listModel = new DefaultListModel<String>();
 	private JTextField textField;
 
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -30,8 +40,9 @@ public class MessageFrame extends JFrame implements MessageListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
-//					frame.setVisible(true);
+					Client client = new Client("localhost", 3006);
+					MessageFrame frame = new MessageFrame(client, "chi");
+					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -91,19 +102,56 @@ public class MessageFrame extends JFrame implements MessageListener {
 					listModel.addElement("You: " + text);
 					textField.setText("");
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+			}
+		});
+		
+		final JButton btnSendFile = new JButton("G\u01B0\u0309i file");
+		btnSendFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("e");
+				JFileChooser fileChooser = new JFileChooser();
+	            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	            int option = fileChooser.showOpenDialog(MessageFrame.this);
+	            if(option == JFileChooser.APPROVE_OPTION) {
+	            	System.out.println("voday");
+	            	;
+	            	File file = fileChooser.getSelectedFile();
+	            	System.out.println(file.getName());
+//	            	try {
+//						client.sendFile(username, file);
+//					} catch (IOException e2) {
+//						// TODO Auto-generated catch block
+//						e2.printStackTrace();
+//					}
+	            	listModel.addElement("You: " + "da gui 1 file - " + file.getName());
+	            	try {
+						String base64 = FileHandle.encodeFileToBase64Binary(file);
+						System.out.println(base64);
+						client.sendFile2(username, base64, file.getName());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+	            } else {
+	               // handle when cancel
+	            }
 			}
 		});
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addComponent(textField, GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+				.addGroup(gl_panel_1.createSequentialGroup()
+					.addComponent(textField, GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnSendFile)
+					.addContainerGap())
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addComponent(textField, GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+				.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+					.addComponent(textField, GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+					.addComponent(btnSendFile))
 		);
 		panel_1.setLayout(gl_panel_1);
 		
@@ -128,4 +176,6 @@ public class MessageFrame extends JFrame implements MessageListener {
 		}
 		
 	}
+	
+	
 }

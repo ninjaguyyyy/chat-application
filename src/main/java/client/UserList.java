@@ -158,5 +158,4 @@ public class UserList extends JFrame implements UserStatusListener {
 	public void offline(String username) {
 		userListModel.removeElement(username);
 	}
-	
 }

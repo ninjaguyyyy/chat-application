@@ -2,12 +2,16 @@ package client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.FileUtils;
 
 public class FileHandle {
 	private static PrintStream printStream;
@@ -38,5 +42,10 @@ public class FileHandle {
 			}
 		}
 		return false;
+	}
+	
+	public static String encodeFileToBase64Binary(File file) throws IOException {
+	    byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64(FileUtils.readFileToByteArray(file));
+	    return new String(encoded, StandardCharsets.US_ASCII);
 	}
 }

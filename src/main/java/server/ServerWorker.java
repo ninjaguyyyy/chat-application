@@ -71,6 +71,13 @@ public class ServerWorker extends Thread {
 				} else if ("leave".equalsIgnoreCase(cmd)) {
 					handleLeave(tokens);
 					
+				} else if ("file".equalsIgnoreCase(cmd)) {
+					String[] tokenFile = StringUtils.split(line, null, 3);
+					handleFile(tokenFile);
+				} else if("file2".equalsIgnoreCase(cmd)) {
+					String[] tokenMsg = StringUtils.split(line, null, 4);
+					handleFile2(tokenMsg);
+					
 				} else {
 					String msg = "unknown " + cmd + "\n";
 					out.write(msg.getBytes());
@@ -82,6 +89,39 @@ public class ServerWorker extends Thread {
 		clientSocket.close();
 	}
 	
+	private void handleFile2(String[] tokenMsg) throws IOException {
+		String sendTo = tokenMsg[1];
+		String base64 = tokenMsg[2];
+		String fileName = tokenMsg[3];
+		
+		System.out.println(sendTo);
+		System.out.println(base64);
+		System.out.println(fileName);
+		
+		List<ServerWorker> workers = server.getWorkers();
+		
+		for(ServerWorker worker: workers) {
+			if(sendTo.equalsIgnoreCase(worker.getLogin())) {
+				String outMsg = "file2 " + login + " " + base64 + " " + fileName + "\n";
+				worker.send(outMsg);
+			}
+		}
+		
+	}
+
+	private void handleFile(String[] tokenFile) throws IOException {
+		String sendTo = tokenFile[1];
+		String body = tokenFile[2];
+		
+		List<ServerWorker> workers = server.getWorkers();
+		for(ServerWorker worker: workers) {
+			if(sendTo.equalsIgnoreCase(worker.getLogin())) {
+				String outMsg = "file2 " + login + " " + body + "\n";
+				worker.send(outMsg);
+			}
+		}
+	}
+
 	private void handleLeave(String[] tokens) {
 		if(tokens.length > 1) {
 			String topic = tokens[1];

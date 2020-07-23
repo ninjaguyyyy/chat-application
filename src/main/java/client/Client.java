@@ -2,20 +2,33 @@ package client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Client {
 	private String serverName;
 	private int serverPort;
 	private Socket socket;
+	FileInputStream fis = null;
+    BufferedInputStream bis = null;
 	private InputStream serverIn;
 	private OutputStream serverOut;
 	private BufferedReader bufferdIn;
@@ -34,6 +47,22 @@ public class Client {
 	public void msg(String sendTo, String body) throws IOException {
 		String cmd = "msg " + sendTo + " " + body + "\n";
 		serverOut.write(cmd.getBytes());
+	}
+	
+	public void sendFile(String sendTo, File file) throws IOException {
+		fis = new FileInputStream(file);
+        bis = new BufferedInputStream(fis);
+        byte[] fileByteArray  = new byte [(int)file.length()];
+        bis.read(fileByteArray, 0, fileByteArray.length);
+        
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        output.write(("file " + sendTo + "").getBytes());
+        output.write(fileByteArray);
+
+        byte[] out = output.toByteArray();
+        
+        serverOut.write(out);
 	}
 
 	public void logout() throws IOException {
@@ -63,8 +92,13 @@ public class Client {
 					} else if("offline".equalsIgnoreCase(cmd)) {
 						handleOffline(tokens);
 					} else if("msg".equalsIgnoreCase(cmd)) {
+						System.out.println("nhan: msg");
 						String[] tokenMsg = StringUtils.split(line, null, 3);
 						handleMessage(tokenMsg);
+					} else if("file2".equalsIgnoreCase(cmd)) {
+						System.out.println("nhan: file2");
+						String[] tokenMsg = StringUtils.split(line, null, 4);
+						handleFile2(tokenMsg);
 					}
 				}
 			}
@@ -78,6 +112,28 @@ public class Client {
 		}
 	};
 	
+	private void handleFile2(String[] tokenMsg) throws IOException {
+		String username = tokenMsg[1];
+		String base64 = tokenMsg[2];
+		String fileName = tokenMsg[3];
+		String message = "nhan duoc 1 file: " + fileName + "(xem o Download)";
+		
+
+		
+		for(MessageListener listener: messageListeners) {
+			listener.onMessage(username, message);
+		}
+		
+		byte[] decodedBytes = Base64.getDecoder().decode(base64);
+		
+		String home = System.getProperty("user.home");
+		File file = new File(home+"/Downloads/" + fileName);
+		
+		FileUtils.writeByteArrayToFile(file, decodedBytes);
+
+		
+	}
+
 	public void handleMessage(String[] tokenMsg) {
 		String username = tokenMsg[1];
 		String msgBody = tokenMsg[2];
@@ -146,4 +202,12 @@ public class Client {
 	public void removeMessageListener(MessageListener messageListener) {
 		messageListeners.remove(messageListener);
 	}
+
+	public void sendFile2(String sendTo, String base64, String fileName) throws IOException {
+		String cmd = "file2 " + sendTo + " " + base64 +  " " + fileName + "\n";
+		System.out.println(cmd);
+		serverOut.write(cmd.getBytes());
+	}
+
+	
 }
